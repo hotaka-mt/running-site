@@ -1317,7 +1317,7 @@ wheels = [
 [[package]]
 name = "running-site"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "opencv-contrib-python" },
     { name = "paddleocr" },

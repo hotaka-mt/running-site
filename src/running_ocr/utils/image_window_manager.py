@@ -1,13 +1,13 @@
 import cv2 as cv
 import os
 
-# 環境変数の設定（cv.imshowを使うために必要）
-os.environ.pop("XDG_SESSION_TYPE", None)
-os.environ["QT_QPA_PLATFORM"] = "xcb"
-os.environ["QT_QPA_FONTDIR"] = "/usr/share/fonts/truetype/dejavu"
 
 class ImageWindowManager:
     def __init__(self):
+        # ウィンドウマネージャが生成されたときに GUI の環境を設定する。
+        os.environ.pop("XDG_SESSION_TYPE", None)
+        os.environ["QT_QPA_PLATFORM"] = "xcb"
+        os.environ["QT_QPA_FONTDIR"] = "/usr/share/fonts/truetype/dejavu"
         self.open_windows = set()
 
     def show_image(self, window_name, image):
@@ -40,3 +40,13 @@ class ImageWindowManager:
             except cv.error:
                 continue
         self.open_windows.clear()
+
+
+def show_detections(image, detections, manager):
+    annotated = image.copy()
+    for detection in detections:
+        x1, y1, x2, y2 = detection["box"]
+        cv.rectangle(annotated, (x1, y1), (x2, y2), (0, 255, 0), 1)
+        cv.putText(annotated, f"{detection['text']} ({detection['score']:.2f})", (x1, y1),
+                   cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+    manager.show_image("ocr_img", annotated)
