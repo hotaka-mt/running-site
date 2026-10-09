@@ -1,4 +1,10 @@
 import cv2 as cv
+import os
+
+# 環境変数の設定（cv.imshowを使うために必要）
+os.environ.pop("XDG_SESSION_TYPE", None)
+os.environ["QT_QPA_PLATFORM"] = "xcb"
+os.environ["QT_QPA_FONTDIR"] = "/usr/share/fonts/truetype/dejavu"
 
 class ImageWindowManager:
     def __init__(self):
