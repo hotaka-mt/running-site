@@ -180,12 +180,14 @@ def extract_basic_info(basic_img, iwm=None):
         key = get_region_key(center_x, center_y, regions)
         if key is None:
             continue
-        # 同じ区画に複数の結果がある場合は信頼度の高いものを採用する。
+        value = parse_basic_value(key, data["text"])
+        if value is None:
+            continue
+        # 解釈できる候補の中から、信頼度の高いものを採用する。
         if key not in best_scores or data["score"] > best_scores[key]:
-            basic_info[key] = data["text"]
+            basic_info[key] = value
             best_scores[key] = data["score"]
 
-    basic_info = {key: parse_basic_value(key, text) for key, text in basic_info.items()}
     return basic_info
 
 def main():
