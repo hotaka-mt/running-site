@@ -1,5 +1,6 @@
 import os
 import cv2 as cv
+from image_window_manager import ImageWindowManager as IWM
 
 # 環境変数の設定（cv.imshowを使うために必要）
 os.environ.pop("XDG_SESSION_TYPE", None)
@@ -60,14 +61,18 @@ def trimming_image(running_img):
 
     return img_dict
 
-def extract_basic_info(basic_img):
+def extract_basic_info(basic_img, iwm=None):
+    # グレースケール変換
     basic_gray = cv.cvtColor(basic_img, cv.COLOR_BGR2GRAY)
-    cv.imshow("basic_gray", basic_gray)
 
     # 2値化処理
     _, basic_binary = cv.threshold(basic_gray, 50, 255, cv.THRESH_BINARY)
 
-    cv.imshow("basic_binary", basic_binary)
+    if iwm:
+        iwm.show_image("basic_gray", basic_gray)
+        iwm.show_image("basic_binary", basic_binary)
+
+    return basic_binary
 
 def main():
     img_path = select_img_path()
@@ -78,29 +83,17 @@ def main():
     if img is None:
         return
 
+    # ウィンドウマネージャ
+    iwm = IWM()
+
     # cv.namedWindow("選択画像", cv.WINDOW_NORMAL)
     # cv.resizeWindow("選択画像", 402, 4070)
     # cv.imshow("選択画像", img)
 
     img_dict = trimming_image(img)
+    extract_basic_info(img_dict["basic_img"], iwm)
 
-    while True:
-        key = cv.waitKey(1) & 0xFF
-        if key == ord("q"):
-            break
-
-        extract_basic_info(img_dict["basic_img"])
-
-        # cv.imshow("ランニングコース", img_dict["map_img"])
-        # cv.imshow("ランニング基本情報", img_dict["basic_img"])
-        # cv.imshow("ランニング心拍数情報", img_dict["bpm_img"])
-        # cv.imshow("ランニングペース情報", img_dict["pace_img"])
-        # cv.imshow("ランニングケイデンス情報", img_dict["cadence_img"])
-        # cv.imshow("ランニングストライド情報", img_dict["stride_img"])
-        # cv.imshow("ランニング効果情報", img_dict["effect_img"])
-        # cv.imshow("ランニング強度情報", img_dict["intensity_img"])
-
-    cv.destroyAllWindows()
+    iwm.wait()
 
 
 if __name__ == "__main__":
