@@ -17,7 +17,7 @@ class ImageWindowManager:
                 continue
         return False
 
-    def wait(self, key="q", timeout=1):
+    def wait(self, key="q", timeout=30):
         while True:
             if not self.has_open_window():
                 break
