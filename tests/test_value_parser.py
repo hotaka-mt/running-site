@@ -9,6 +9,21 @@ EXPECTED = dict(zip(MI_FITNESS_LAYOUT['basic']['fields'], [5.25, datetime(2026, 
 
 
 class ValueParserTests(unittest.TestCase):
+    def test_additional_fields(self):
+        self.assertEqual(parse_value(' 普通 ', {'parser': 'text'}), '普通')
+        self.assertIsNone(parse_value('  ', {'parser': 'text'}))
+        self.assertEqual(parse_value('41ml/kg/min', MI_FITNESS_LAYOUT['effect']['fields']['vo2max_ml_kg_min']), 41)
+        self.assertEqual(parse_value('83 TL', MI_FITNESS_LAYOUT['effect']['fields']['training_load']), 83)
+        self.assertIsNone(parse_value('83 kcal', MI_FITNESS_LAYOUT['effect']['fields']['training_load']))
+        self.assertEqual(parse_value('7`19"', MI_FITNESS_LAYOUT['pace']['fields']['lap_2_pace']), 439)
+        self.assertEqual(parse_value("7'04″", MI_FITNESS_LAYOUT['pace']['fields']['avg_pace']), 424)
+
+    def test_configured_separator_replacement(self):
+        field = MI_FITNESS_LAYOUT['bpm']['fields']['vo2max_seconds']
+        self.assertEqual(parse_value('00.15:20', field), 920)
+        self.assertIsNone(parse_value('00.60:20', field))
+        self.assertIsNone(parse_value('00.15:20', {'parser': 'duration'}))
+
     def test_eight_values(self):
         for (key, field), text in zip(MI_FITNESS_LAYOUT['basic']['fields'].items(), TEXTS):
             self.assertEqual(parse_value(text, field), EXPECTED[key])

@@ -8,11 +8,16 @@ def parse_value(text, field):
     if text is None:
         return None
     text = text.strip()
+    # 画面固有の OCR 誤認識は、項目定義に明示された置換だけを適用する。
+    for source, target in field.get("replacements", {}).items():
+        text = text.replace(source, target)
     parser = field["parser"]
-    if parser not in {"float", "int", "datetime", "duration", "pace"}:
+    if parser not in {"float", "int", "datetime", "duration", "pace", "text"}:
         raise ValueError(f"Unknown parser: {parser}")
     try:
-        if parser == "float":
+        if parser == "text":
+            return text or None
+        elif parser == "float":
             if re.fullmatch(r"[0-9]+(?:\.[0-9]+)?", text):
                 return float(text)
         elif parser == "int":

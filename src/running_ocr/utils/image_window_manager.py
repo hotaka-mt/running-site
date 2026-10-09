@@ -42,11 +42,11 @@ class ImageWindowManager:
         self.open_windows.clear()
 
 
-def show_detections(image, detections, manager):
+def show_detections(image, detections, manager, window_name="ocr_img"):
     annotated = image.copy()
     for detection in detections:
         x1, y1, x2, y2 = detection["box"]
         cv.rectangle(annotated, (x1, y1), (x2, y2), (0, 255, 0), 1)
         cv.putText(annotated, f"{detection['text']} ({detection['score']:.2f})", (x1, y1),
                    cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
-    manager.show_image("ocr_img", annotated)
+    manager.show_image(window_name, annotated)
