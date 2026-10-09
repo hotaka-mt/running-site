@@ -23,8 +23,7 @@ uv run python main.py
 ```
 
 `img/` の JPG を選択すると、Mi Fitness の基本情報8項目を表示します。
-GUI の OCR 確認ウィンドウは `q` で閉じます。従来の
-`uv run python extraction_running_data.py` も利用できます。
+GUI の OCR 確認ウィンドウは `q` で閉じます。
 
 `src/running_ocr/` は画像の読み込み・切り出し、OCR、区画判定、型変換、
 パイプラインに責務を分けています。画面の座標・パーサー・単位・タイムゾーンは
