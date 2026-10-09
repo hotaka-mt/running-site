@@ -7,12 +7,17 @@ os.environ["QT_QPA_PLATFORM"] = "xcb"
 os.environ["QT_QPA_FONTDIR"] = "/usr/share/fonts/truetype/dejavu"
 
 
-def select_img_path(directory_path="img/"):
-    # 読み込む画像パスを選択する
-    # 引数はディレクトリパス、デフォルトはリポジトリ内のimgフォルダ
+def select_img_path(folder_path="img/"):
+    # フォルダが存在するか確認
+    if not os.path.exists(folder_path):
+        print(f"フォルダ '{folder_path}' が存在しません。")
+        return None
 
     # ディレクトリ内のjpgファイルを取得
-    img_files = [f for f in os.listdir(directory_path) if f.endswith((".jpg"))]
+    img_files = [f for f in os.listdir(folder_path) if f.endswith((".jpg"))]
+    if not img_files:
+        print(f"フォルダ '{folder_path}' にjpgファイルが存在しません。")
+        return None
 
     # 取得した画像ファイルのパスを表示
     for index, img_file in enumerate(img_files):
@@ -25,15 +30,11 @@ def select_img_path(directory_path="img/"):
         except ValueError:
             print("無効な入力です。数字を入力してください。")
             continue
-        if selected_index < 0 or selected_index >= len(img_files):
-            print("存在しない番号です。もう一度入力してください。")
-            for index, img_file in enumerate(img_files):
-                print(f"画像{index+1}: {img_file}")
-        else:
-            break
 
-    # 選択された画像のパスを返す
-    return os.path.join(directory_path, img_files[selected_index])
+        if 0 <= selected_index < len(img_files):
+            return os.path.join(folder_path, img_files[selected_index])
+
+        print(f"1〜{len(img_files)}の番号を入力してください。")
 
 
 def load_image(img_path):
@@ -70,6 +71,8 @@ def extract_basic_info(basic_img):
 
 def main():
     img_path = select_img_path()
+    if img_path is None:
+        return
 
     img = load_image(img_path)
     if img is None:
